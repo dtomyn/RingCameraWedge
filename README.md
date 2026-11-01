@@ -14,6 +14,65 @@ A 3D model of an angled mounting block for a Ring camera, built from the hand sk
 | `requirements.txt` | Python dependencies |
 | `.devcontainer/` | VS Code dev container configuration |
 | `Scan_20261101.png` | The original sketch |
+| `ring_camera_wedge_adjustable.py` | Generates the adjustable version |
+| `ring_camera_wedge_adjustable_base.stl` | Adjustable version: base, ready to print |
+| `ring_camera_wedge_adjustable_head.stl` | Adjustable version: head, ready to print |
+| `ring_camera_wedge_adjustable_assembly.stl` | Adjustable version: both parts together at 8°, for viewing only |
+| `ring_camera_wedge_adjustable_preview.png` | Picture of the adjustable version at 0°, 8° and 20°, and from behind at 8°; the script does not update it |
+
+## Adjustable version
+
+Use this when the camera angle isn't known yet. It has two printed parts, and the camera can be set anywhere from 0° to 20°.
+
+![The adjustable version at three angles](ring_camera_wedge_adjustable_preview.png)
+
+- **Base:** fixes to the mounting surface, with the same mounting screw pattern and cable hole position as the fixed wedge.
+- **Head:** carries the camera, with the same 55 × 110 mm face, camera holes and pocket. It swivels on a vertical axis between two cheeks on the base.
+- **Clamp:** two screws hold the angle by friction. They're reached from the top and bottom, so you can adjust the angle with the camera fitted and watch its live view.
+
+### Parts to buy
+
+| Quantity | Part | Used for |
+|---|---|---|
+| 2 | M4 × 30 mm machine screw | Clamp |
+| 2 | M4 hex nut | Clamp |
+| 2 | M4 washer | Clamp |
+| 2 | 4 mm countersunk screw, about 60 mm or longer | Fixing the base to the surface |
+
+### Print
+
+The STLs are already laid out for printing. Leave them as they are in your slicer.
+
+- **Base:** back face on the bed, no supports needed.
+- **Head:** camera face on the bed, with supports inside the pocket.
+
+Print one test set before relying on it. The parts are designed with 0.3 mm of clearance, which may need adjusting for your printer through `FIT_CLEARANCE` in the script.
+
+### Assemble and adjust
+
+1. Slide a nut into each of the two slots on the side of the head's drum.
+2. Fit the head between the cheeks of the base, and pass the cable through the hole in the base into the pocket.
+3. Put a washer on each clamp screw. Insert the screws through the top and bottom cheeks into the nuts, and tighten them lightly.
+4. Fix the base to the surface, then fit the camera to the head.
+5. Loosen the clamp screws, turn the head until the view is right, and tighten them. The screwdriver shaft must be 7 mm or narrower.
+
+### Limits
+
+- **Direction:** the head turns only away from the surface the base is screwed to, as on the fixed wedge. It can't go below 0°.
+- **Space needed:** the head needs room to swing. At 8° it stands 50.2 mm off the back face and extends 2.0 mm past the thin side. At 20° those become 54.9 mm and 3.8 mm. The fixed wedge is 46 mm deep.
+- **Camera holes:** these are 12 mm deep rather than the fixed wedge's 17 mm, so that a screwdriver can reach the clamp screws. Check that your camera's screws fit.
+- **Pocket:** this is 11 mm deep at every angle.
+- **Holding force:** the angle is held by friction only. Gravity doesn't turn a vertical axis, but a firm knock could shift it.
+
+### Switching to the fixed wedge
+
+Once you've found the right angle, you can print the stronger one-piece wedge for it. With calipers, measure from the back face to each edge of the camera face. The angle is `asin((larger - smaller) / 55)`. Then generate that wedge as described under [Script options](#script-options).
+
+To generate the adjustable parts with the assembly at a different angle, run:
+
+```bash
+python ring_camera_wedge_adjustable.py --assembly-angle 12
+```
 
 ## Import into Tinkercad
 
