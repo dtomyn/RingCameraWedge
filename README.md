@@ -2,6 +2,8 @@
 
 A 3D model of an angled mounting block for a Ring camera, built from the hand sketch in `Scan_20261101.png`. A Python script generates an STL file that you can import into Tinkercad.
 
+For an overview, watch the [explainer video on YouTube](https://www.youtube.com/watch?v=u9r90f_Vszs), which has a computer-generated voice.
+
 ![Three views of the wedge](ring_camera_wedge_preview.png)
 
 ## Files
@@ -19,6 +21,7 @@ A 3D model of an angled mounting block for a Ring camera, built from the hand sk
 | `ring_camera_wedge_adjustable_head.stl` | Adjustable version: head, ready to print |
 | `ring_camera_wedge_adjustable_assembly.stl` | Adjustable version: both parts together at 8°, for viewing only |
 | `ring_camera_wedge_adjustable_preview.png` | Picture of the adjustable version at 0°, 8° and 20°, and from behind at 8°; the script does not update it |
+| `video/` | Generates the explainer video of this repo; see [video/README.md](video/README.md) |
 
 ## Weather sealing
 
@@ -222,6 +225,17 @@ python ring_camera_wedge.py --angle 12 --output ring_camera_wedge_12deg.stl
 ```
 
 For any other change, edit the constants at the top of `ring_camera_wedge.py`.
+
+## Explainer video options
+
+The explainer video comes in two versions, both made by `video/encode.py`:
+
+| Command (from the repo root) | Version | Size | Output |
+|---|---|---|---|
+| `video\.venv\Scripts\python video\encode.py` | Default: silent with captions, 720p, small enough to upload to GitHub on a free plan | About 9.4 MB | `video/ring_camera_wedge_explainer.mp4` |
+| `video\.venv\Scripts\python video\encode.py --voiced` | Computer-generated voice, music and sound effects, 1080p | About 44 MB | `video/build/ring_camera_wedge_explainer_voiced.mp4` |
+
+Both commands need the frames and audio to be built first, and that only works on Windows. See [video/README.md](video/README.md) for the setup and rebuild steps.
 
 ## Dimensions
 

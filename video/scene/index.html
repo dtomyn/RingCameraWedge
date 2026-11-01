@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ring camera wedge explainer</title>
+<script type="importmap">
+{"imports": {
+  "three": "/video/node_modules/three/build/three.module.js",
+  "three/addons/": "/video/node_modules/three/examples/jsm/"
+}}
+</script>
+<style>
+@font-face { font-family: Inter; font-weight: 400; src: url(/video/node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2); }
+@font-face { font-family: Inter; font-weight: 600; src: url(/video/node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2); }
+@font-face { font-family: Inter; font-weight: 800; src: url(/video/node_modules/@fontsource/inter/files/inter-latin-800-normal.woff2); }
+@font-face { font-family: Mono; font-weight: 400; src: url(/video/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2); }
+@font-face { font-family: Mono; font-weight: 700; src: url(/video/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2); }
+:root {
+  --ink: #eef2f7; --dim: #93a0b1; --faint: #5a6677; --amber: #ffb224; --blue: #5aa9ff; --cyan: #5ad1ff;
+  --red: #ff6b4a; --green: #58d68d; --panel: rgba(13, 18, 26, .86); --line: rgba(255, 255, 255, .11);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #0a0d12; color: var(--ink); font-family: Inter, sans-serif; }
+canvas { position: absolute; inset: 0; }
+.layer { position: absolute; inset: 0; pointer-events: none; }
+.ov { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+.mono { font-family: Mono, monospace; }
+
+#fade { background: #05070a; opacity: 1; }
+#chip { position: absolute; left: 56px; top: 40px; font-size: 19px; font-weight: 600; letter-spacing: .02em; color: var(--dim); display: flex; gap: 12px; align-items: center; padding: 5px 12px; border-radius: 7px; background: rgba(8, 11, 16, .72); }
+#chip b { color: var(--amber); font-family: Mono, monospace; font-weight: 700; }
+#repo { position: absolute; right: 56px; top: 40px; padding: 5px 12px; border-radius: 7px; background: rgba(8, 11, 16, .72); font-size: 18px; color: var(--dim); font-family: Mono, monospace; }
+#progress { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--amber); width: 0; }
+#caption { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); width: max-content; max-width: 1400px; text-align: center; font-size: 29px; line-height: 1.32; font-weight: 600; padding: 11px 26px; border-radius: 10px; background: rgba(5, 7, 10, .78); color: #fff; text-wrap: balance; }
+
+#callouts { position: absolute; inset: 0; }
+#callouts svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.co { position: absolute; font-size: 23px; font-weight: 600; white-space: nowrap; padding: 6px 13px; border-radius: 7px; background: rgba(8, 11, 16, .86); border: 1px solid var(--line); transform: translate(-50%, -50%); }
+.co small { display: block; font-size: 17px; font-weight: 400; color: var(--dim); }
+.co.amber { color: var(--amber); } .co.cyan { color: var(--cyan); } .co.red { color: var(--red); } .co.blue { color: var(--blue); }
+
+.panel { position: absolute; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.panel .bar { height: 42px; display: flex; align-items: center; padding: 0 18px; gap: 8px; border-bottom: 1px solid var(--line); font-size: 16px; color: var(--dim); font-family: Mono, monospace; }
+.dot { width: 11px; height: 11px; border-radius: 50%; background: #3a4552; }
+.bar span { margin-left: 10px; }
+
+.code { left: 56px; top: 96px; width: 900px; height: 830px; }
+.code .view { position: absolute; left: 0; right: 0; top: 42px; bottom: 0; overflow: hidden; }
+.code .inner { position: absolute; left: 0; top: 0; width: 100%; font: 400 19px/31px Mono, monospace; }
+.code .ln { position: relative; height: 31px; white-space: pre; padding-left: 74px; color: #b9c4d2; }
+.code .ln i { position: absolute; left: 0; width: 56px; text-align: right; font-style: normal; color: #48535f; }
+.code .ln.hl { background: rgba(255, 178, 36, .15); box-shadow: inset 4px 0 0 var(--amber); color: #fff; }
+.code .ln.hl i { color: var(--amber); }
+.code .view::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 70px; background: linear-gradient(90deg, transparent, rgba(13, 18, 26, .97)); }
+.t-c { color: #66788c; font-style: normal; } .t-s { color: #8fd08f; } .t-k { color: #d59cff; } .t-n { color: #ffb224; } .t-d { color: #5ab8ff; } .t-C { color: #7fd6e8; }
+
+.stat { position: absolute; }
+.stat .v { font: 700 58px/1 Mono, monospace; color: var(--amber); }
+.stat .l { font-size: 20px; color: var(--dim); margin-top: 7px; }
+
+#title-card { position: absolute; left: 110px; top: 360px; }
+#title-card h1 { margin: 0; font-size: 104px; line-height: 1.02; font-weight: 800; letter-spacing: -.03em; }
+#title-card p { margin: 26px 0 0; font-size: 34px; color: var(--amber); font-weight: 600; }
+
+#carve-card { position: absolute; left: 1010px; top: 96px; }
+#carve-card .n { font: 700 22px Mono, monospace; color: var(--amber); }
+#carve-card .t { font-size: 40px; font-weight: 800; letter-spacing: -.01em; margin-top: 3px; }
+#carve-tris { right: 70px; top: 96px; text-align: right; }
+#carve-tris .v { font-size: 46px; color: var(--ink); }
+
+.term { left: 56px; top: 96px; width: 880px; height: 280px; }
+.term pre { margin: 0; padding: 18px 22px; font: 400 18px/28px Mono, monospace; white-space: pre-wrap; overflow-wrap: anywhere; color: #d6dee8; }
+.term .p { color: var(--green); } .term .o { color: #93a0b1; }
+.cursor { display: inline-block; width: 11px; height: 21px; background: var(--amber); vertical-align: -4px; }
+#angle-big { position: absolute; left: 76px; top: 440px; font: 700 220px/1 Mono, monospace; color: var(--amber); letter-spacing: -.04em; }
+#angle-note { position: absolute; left: 84px; top: 690px; font-size: 25px; color: var(--dim); max-width: 780px; line-height: 1.4; }
+#angle-note b { color: var(--ink); }
+
+.hex { left: 56px; top: 96px; width: 900px; height: 830px; }
+.hex .body { padding: 20px 24px; font: 400 21px/34px Mono, monospace; }
+.hex .row { white-space: pre; color: #4e5a68; }
+.hex .row em { color: #4e5a68; font-style: normal; }
+.hex .b { color: #4e5a68; }
+.hex .b.on { color: #0a0d12; border-radius: 3px; }
+.hex .note { font: 400 18px/26px Inter, sans-serif; color: var(--dim); margin-bottom: 12px; }
+.fields { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 16px; font: 400 19px/33px Mono, monospace; }
+.fields div { display: flex; gap: 14px; opacity: .3; white-space: pre; }
+.fields div.on { opacity: 1; }
+.fields u { text-decoration: none; display: inline-block; width: 15px; height: 15px; border-radius: 3px; margin-top: 9px; }
+.fields b { width: 118px; font-weight: 700; }
+#stl-count { left: 96px; top: 400px; }
+#stl-count .v { font-size: 124px; }
+#stl-count .l { font-size: 28px; }
+#stl-readers { position: absolute; left: 82px; top: 800px; display: flex; gap: 16px; align-items: center; font-size: 26px; font-weight: 600; }
+#stl-readers span { padding: 10px 20px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel); }
+
+#honest { position: absolute; left: 50%; top: 96px; transform: translateX(-50%); width: 1000px; text-align: center; padding: 22px 34px; border-radius: 14px; border: 2px solid var(--red); background: rgba(30, 12, 8, .9); }
+#honest b { display: block; font-size: 42px; font-weight: 800; color: var(--red); letter-spacing: -.01em; }
+#honest span { font-size: 24px; color: #f1dcd6; }
+
+#question { position: absolute; left: 150px; top: 300px; font: 800 300px/1 Inter, sans-serif; color: var(--amber); }
+#inset { left: 56px; top: 96px; width: 620px; height: 430px; }
+#inset svg { position: absolute; left: 0; top: 42px; width: 620px; height: 330px; }
+#inset .cap { position: absolute; left: 20px; right: 20px; bottom: 12px; font-size: 18px; color: var(--dim); }
+#adj-readout { position: absolute; left: 76px; top: 540px; }
+#adj-readout .v { font: 700 170px/1 Mono, monospace; color: var(--amber); letter-spacing: -.04em; }
+#adj-pips { display: flex; gap: 12px; margin-top: 16px; }
+#adj-pips i { font: 700 21px Mono, monospace; font-style: normal; width: 72px; padding: 8px 0; text-align: center; border-radius: 8px; border: 1px solid var(--line); color: var(--faint); }
+#adj-pips i.on { background: var(--amber); color: #0a0d12; border-color: var(--amber); }
+#adj-cmd { position: absolute; left: 76px; top: 800px; font: 400 25px Mono, monospace; padding: 12px 20px; border-radius: 9px; background: var(--panel); border: 1px solid var(--line); }
+#adj-cmd span { color: var(--green); }
+
+#print-specs { position: absolute; right: 60px; top: 110px; width: 370px; display: flex; flex-direction: column; gap: 13px; }
+.spec { padding: 13px 18px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); font-size: 21px; opacity: 0; }
+.spec b { display: block; font-size: 30px; font-weight: 800; color: var(--amber); }
+#print-check { position: absolute; left: 60px; top: 110px; width: 430px; }
+#print-check h3 { margin: 0 0 12px; font-size: 25px; }
+#print-check .row { display: flex; gap: 9px; }
+#print-check i { font: 700 19px Mono, monospace; font-style: normal; width: 62px; padding: 9px 0; text-align: center; border-radius: 8px; border: 1px solid var(--line); color: var(--faint); background: var(--panel); }
+#print-check i.on { background: var(--green); color: #0a0d12; border-color: var(--green); }
+
+#files { left: 56px; top: 96px; width: 800px; height: 590px; }
+#files .body { padding: 14px 22px; font: 400 19px/30px Mono, monospace; }
+#files .f { display: flex; justify-content: space-between; color: #c6d0dc; }
+#files .f span:last-child { color: var(--faint); }
+#files .f.stl span:first-child { color: var(--amber); } #files .f.py span:first-child { color: var(--blue); }
+#commits { left: 56px; top: 704px; width: 800px; height: 228px; }
+#commits .body { padding: 14px 22px; font: 400 18px/32px Mono, monospace; color: #c6d0dc; white-space: nowrap; }
+#commits em { color: var(--amber); font-style: normal; margin-right: 12px; }
+#mantra { position: absolute; left: 900px; top: 96px; right: 60px; display: flex; flex-direction: column; gap: 4px; font-size: 44px; font-weight: 800; letter-spacing: -.02em; }
+#end { position: absolute; left: 110px; top: 300px; }
+#end h1 { margin: 0; font-size: 100px; line-height: 1.02; font-weight: 800; letter-spacing: -.03em; }
+#end p { margin: 24px 0 0; font-size: 31px; color: var(--amber); font-weight: 600; }
+#end .url { margin-top: 40px; font: 400 29px Mono, monospace; color: var(--ink); padding: 14px 22px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); display: inline-block; }
+#end .fine { margin-top: 26px; font-size: 19px; color: var(--dim); max-width: 780px; line-height: 1.45; }
+</style>
+</head>
+<body>
+<div id="gl" class="layer"></div>
+<div class="layer">
+  <div id="callouts"><svg></svg></div>
+
+  <div class="ov" id="ov-title"><div id="title-card"><h1>Ring camera<br>wedge</h1><p>From pencil sketch to printable part, in Python</p></div></div>
+
+  <div class="ov" id="ov-sketch"></div>
+
+  <div class="ov" id="ov-code">
+    <div class="panel code"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>ring_camera_wedge.py</span></div><div class="view"><div class="inner" id="code-inner"></div></div></div>
+    <div class="stat" id="code-lines" style="right:70px;top:96px;text-align:right"><div class="v"></div><div class="l">lines of Python, no CAD file</div></div>
+  </div>
+
+  <div class="ov" id="ov-carve">
+    <div class="panel code"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>ring_camera_wedge.py &middot; build()</span></div><div class="view"><div class="inner" id="carve-inner"></div></div></div>
+    <div id="carve-card"><div class="n"></div><div class="t"></div></div>
+    <div class="stat" id="carve-tris"><div class="v"></div><div class="l">triangles so far</div></div>
+  </div>
+
+  <div class="ov" id="ov-angle">
+    <div class="panel term"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>terminal, virtual environment active</span></div><pre id="term"></pre></div>
+    <div id="angle-big"></div>
+    <div id="angle-note"></div>
+  </div>
+
+  <div class="ov" id="ov-stl">
+    <div class="panel hex" id="hex-panel"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>ring_camera_wedge.stl &middot; raw bytes</span></div><div class="body"><div class="note" id="hex-note"></div><div id="hex-rows"></div><div class="fields" id="hex-fields"></div></div></div>
+    <div class="stat" id="stl-count"><div class="v"></div><div class="l">triangles in ring_camera_wedge.stl</div></div>
+    <div id="stl-readers"><span>Tinkercad</span><span>Your slicer</span></div>
+  </div>
+
+  <div class="ov" id="ov-weather"><div id="honest"><b>Not tested. No IP rating.</b><span>Sealing depends on how it's printed and assembled. Check the pocket after the first heavy rains.</span></div></div>
+
+  <div class="ov" id="ov-adjustable">
+    <div id="question">?&deg;</div>
+    <div class="panel" id="inset"><div class="bar"><i class="dot"></i><span>tooth profile at 19 mm radius, enlarged</span></div><svg viewBox="0 0 620 330"></svg><div class="cap"></div></div>
+    <div id="adj-readout"><div class="v"></div><div id="adj-pips"></div></div>
+    <div id="adj-cmd"><span>$</span> python ring_camera_wedge.py --angle <b id="adj-cmd-a"></b></div>
+  </div>
+
+  <div class="ov" id="ov-print">
+    <div id="print-specs">
+      <div class="spec"><b>ASA</b>best choice outdoors</div>
+      <div class="spec"><b>5+ walls</b>6 top and bottom layers</div>
+      <div class="spec"><b>40%+ infill</b>walls matter more for leaks</div>
+      <div class="spec"><b>0.4 mm nozzle</b>0.2 mm layers or finer, for the teeth</div>
+    </div>
+    <div id="print-check"><h3>Test set: do the teeth mesh?</h3><div class="row"></div></div>
+  </div>
+
+  <div class="ov" id="ov-outro">
+    <div class="panel" id="files"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>dtomyn/RingCameraWedge</span></div><div class="body" id="files-body"></div></div>
+    <div class="panel" id="commits"><div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>git log</span></div><div class="body" id="commits-body"></div></div>
+    <div id="mantra"><span>Change a number.</span><span>Run the script.</span><span>Print the part.</span></div>
+    <div id="end"><h1>Ring camera<br>wedge</h1><p>From a pencil line to a printable part</p><div class="url">github.com/dtomyn/RingCameraWedge</div><div class="fine">Camera shown is a stand-in, not a model of a real product. Ring is a trademark of its owner.</div></div>
+  </div>
+
+  <div id="chip"><b id="chip-n"></b><span id="chip-t"></span></div>
+  <div id="repo">dtomyn/RingCameraWedge</div>
+  <div id="caption"></div>
+  <div id="progress"></div>
+  <div class="layer" id="fade"></div>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>
