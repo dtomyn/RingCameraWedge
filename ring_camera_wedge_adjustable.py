@@ -19,9 +19,10 @@ import numpy as np
 import trimesh
 
 from ring_camera_wedge import (
-    CABLE_D, CABLE_OFFSET, CABLE_Z, CAMERA_HOLE_D, CAMERA_HOLE_SPACING, FACE_WIDTH,
-    HEIGHT, OVERSHOOT, POCKET_WIDTH, POCKET_Z, SCREW_SPACING, SCREW_X, SECTIONS,
-    SCREW_D, SCREW_HEAD_D, SCREW_SINK_DEPTH, prism,
+    CABLE_D, CABLE_OFFSET, CABLE_SEAL_R, CABLE_Z, CAMERA_HOLE_D, CAMERA_HOLE_SPACING,
+    FACE_WIDTH, HEIGHT, OVERSHOOT, POCKET_WIDTH, POCKET_Z, SCREW_SEAL_R, SCREW_SPACING,
+    SCREW_X, SECTIONS, SCREW_D, SCREW_HEAD_D, SCREW_SINK_DEPTH, WEEP_D, WEEP_OFFSET,
+    pocket_seal_groove, prism, ring_seal_groove,
 )
 
 MAX_ANGLE_DEG = 20.0  # the cable slot and clearances are designed for 0 to this
@@ -50,6 +51,11 @@ BASE_MID_FRONT_X = 22.5  # lower between the cheeks, to avoid thin edges on the 
 CHEEK_Z = (17.0, 93.0)  # outer faces of the cheeks, where the clamp screw heads sit
 CHEEK_LOBE_R = 7.0
 DRIVER_BORE_R = 6.0
+HOOD_R = 27.0  # the upper cheek roofs over the drum to keep rain off it
+HOOD_PLATE_GAP = 1.0  # between the hood and the back of the head's plate, at any angle
+DRAIN_D = 4.0  # through the lower cheek, so water can't sit around the teeth
+DRAIN_R = 23.0  # beside the teeth, which stop at TOOTH_RADII and TOOTH_SPAN_DEG
+DRAIN_DEG = 40.0  # either side of the back of the base
 
 # Head
 PLATE_BACK = 11.0
@@ -58,6 +64,7 @@ POCKET_BACK = 5.0
 BOSS_R = 4.0
 BOSS_BACK = 3.5  # leaves room for a screwdriver (up to 7 mm) to pass the bosses
 CAMERA_HOLE_BACK = 4.0
+WEEP_X = 8.0  # clear of the base's lower cheek at every angle
 
 # Clamp hardware: M4 x 30 screw, M4 hex nut, washer
 CLAMP_HOLE_D = 4.5
@@ -137,10 +144,22 @@ def build_base():
     ], engine="manifold")
 
     # Added after the cuts above, which share their end planes with the lobes
-    lobes = []
-    for z0, z1 in (CHEEK_Z[0], cheek_inner[0]), (cheek_inner[1], CHEEK_Z[1]):
-        lobes.append(z_cylinder(CHEEK_LOBE_R, x, y, z0, z1))
-        lobes.append(box(BASE_FRONT_X - OVERSHOOT, x, y - CHEEK_LOBE_R, y + CHEEK_LOBE_R, z0, z1))
+    z0, z1 = CHEEK_Z[0], cheek_inner[0]
+    lobes = [
+        z_cylinder(CHEEK_LOBE_R, x, y, z0, z1),
+        box(BASE_FRONT_X - OVERSHOOT, x, y - CHEEK_LOBE_R, y + CHEEK_LOBE_R, z0, z1),
+    ]
+
+    # The upper cheek is a hood, cut back to clear the head's plate at both extremes of its swing
+    z0, z1 = cheek_inner[1], CHEEK_Z[1]
+    reach = PLATE_BACK - HOOD_PLATE_GAP
+    clear_at_0 = box(-2 * HOOD_R, reach, -2 * HOOD_R, 2 * HOOD_R, z0, z1)
+    clear_at_max = clear_at_0.copy()
+    clear_at_max.apply_transform(trimesh.transformations.rotation_matrix(np.radians(-MAX_ANGLE_DEG), (0, 0, 1)))
+    hood = trimesh.boolean.intersection(
+        [z_cylinder(HOOD_R, 0, 0, z0, z1), clear_at_0, clear_at_max], engine="manifold")
+    hood.apply_translation((x, y, 0))
+    lobes.append(hood)
 
     # Locking teeth, standing on the lower cheek
     teeth = tooth_sector(TOOTH_RADII, TOOTH_SPAN_DEG, 0, cheek_inner[0] - OVERSHOOT,
@@ -160,10 +179,18 @@ def build_base():
         CABLE_D / 2,
         segment=((-OVERSHOOT, y_cable, CABLE_Z), (BASE_MID_FRONT_X, y_cable, CABLE_Z)),
         sections=SECTIONS))
+    cutters.append(ring_seal_groove((0, y_cable, CABLE_Z), (0, -1, 0), CABLE_SEAL_R))
+
+    # Drains from the lower cheek out of the bottom of the base
+    for side in -1, 1:
+        a = np.radians(DRAIN_DEG)
+        drain_x, drain_y = x - DRAIN_R * np.cos(a), y + side * DRAIN_R * np.sin(a)
+        cutters.append(z_cylinder(DRAIN_D / 2, drain_x, drain_y, -OVERSHOOT, cheek_inner[0] + OVERSHOOT))
 
     # Block mounting screw holes: same pattern as the fixed wedge
     for z in (HEIGHT - SCREW_SPACING) / 2, (HEIGHT + SCREW_SPACING) / 2:
         cutters.append(mounting_screw_cutter(FACE_WIDTH, SCREW_X, z))
+        cutters.append(ring_seal_groove((SCREW_X, FACE_WIDTH, z), (-1, 0, 0), SCREW_SEAL_R))
 
     return trimesh.boolean.difference([body, *cutters], engine="manifold")
 
@@ -196,6 +223,10 @@ def build_head():
         # Cable route from the back of the drum, past the clamp screw, into the pocket
         box(-DRUM_R - OVERSHOOT, -5, *slot_y, *slot_z),
         box(-5 - OVERSHOOT, POCKET_BACK + OVERSHOOT, 4.5, slot_y[1], *slot_z),
+        # Gasket between the camera and the face, around the pocket
+        pocket_seal_groove((PLATE_FRONT, 0, sum(POCKET_Z) / 2), (0, 1, 0)),
+        # Weep hole from the pocket floor out of the underside of the drum
+        z_cylinder(WEEP_D / 2, WEEP_X, -WEEP_OFFSET, DRUM_Z[0] - OVERSHOOT, POCKET_Z[0] + OVERSHOOT),
     ]
 
     # Clamp screw from below, with a nut slid in from the thin side

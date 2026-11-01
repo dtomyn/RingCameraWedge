@@ -20,6 +20,60 @@ A 3D model of an angled mounting block for a Ring camera, built from the hand sk
 | `ring_camera_wedge_adjustable_assembly.stl` | Adjustable version: both parts together at 8°, for viewing only |
 | `ring_camera_wedge_adjustable_preview.png` | Picture of the adjustable version at 0°, 8° and 20°, and from behind at 8°; the script does not update it |
 
+## Weather sealing
+
+Both versions are designed to keep water and dust out of the electrical pocket, but only if you print and assemble them as described here. A plain print leaks through its layers, and the seals below are separate parts you fit yourself. None of this has been tested, so it has no IP rating. Check the pocket after the first few heavy rains.
+
+| | Fixed wedge | Adjustable version |
+|---|---|---|
+| **Pocket** | Sealed | Sealed |
+| **Rest of the part** | One solid block | Open swivel joint that gets wet and dusty, then drains |
+| **Best for** | Permanent outdoor use | Finding the angle, or sheltered locations |
+
+The swivel has to move, so it can't be sealed. Grit in its teeth can also stop them meshing. For a permanent outdoor mount, find the angle with the adjustable version and then print the fixed wedge.
+
+### What the model includes
+
+- **Camera face:** a groove around the pocket for a gasket that the camera presses against.
+- **Cable hole:** an O-ring groove around it on the back face. On the fixed wedge, the hole also rises 5° towards the pocket, so water runs back out, and has a 12 mm recess at the back for putty.
+- **Mounting screws:** an O-ring groove around each hole where it meets the mounting surface.
+- **Weep hole:** a 3 mm hole in the pocket floor that lets out condensation and any water that gets past the seals. It's the one opening in the sealed pocket, and it faces down to limit dust. Don't plug it, or water that gets in can't escape. If insects or dust are a problem, push a small piece of stainless mesh into it.
+- **Adjustable version only:** the upper cheek is now a hood over the swivel, and two 4 mm drains in the lower cheek stop water sitting around the teeth.
+
+### Parts to buy
+
+These are in addition to the screws for your version.
+
+| Quantity | Part | Used for |
+|---|---|---|
+| About 150 mm | 2 mm soft silicone cord, or closed-cell foam cord | Camera face gasket |
+| 1 | 18 × 2 mm O-ring | Cable hole, back face |
+| 2 | 8 × 2 mm O-ring | Mounting screws |
+| 1 tube | Neutral-cure outdoor silicone | Screw heads, camera holes, surface joint. Avoid acetic-cure silicone (the kind that smells of vinegar), which can corrode electronics |
+| 1 pack | Non-hardening sealing putty (duct seal) | Around the cable |
+
+Use stainless steel for all screws, nuts and washers. On the adjustable version, use bonded sealing washers under the clamp and pivot screw heads instead of plain washers.
+
+### Print for sealing
+
+- **Material:** ASA is the best choice outdoors. PETG also works but should be painted to protect it from sunlight. Don't use PLA.
+- **Walls:** at least 5 walls and 6 top and bottom layers, with 40% or more infill. Extra walls do more to stop leaks than extra infill.
+- **Flow:** calibrate it first, because under-extruded parts leak. Dry the filament too.
+- **Fixed wedge orientation:** in your slicer, lay the camera face flat on the bed, with supports inside the pocket. This gives the gasket a smooth surface. The adjustable head already prints this way.
+- **Grooves:** keep supports out of the gasket grooves, using a support blocker if needed. Check that the first layer hasn't squeezed the bed-side grooves narrower.
+- **Coating:** for the best result, brush on two coats of epoxy or exterior paint before assembly. Keep it out of the grooves, screw threads and teeth, and off the swivel surfaces.
+
+### Seal it during assembly
+
+1. **Check the camera first.** The groove's outer edge measures 43.2 mm wide by 39.2 mm tall, from 25.4 to 64.6 mm above the bottom. The back of the camera has to be flat where it covers this area. If it isn't, or the cord stops the camera seating, use foam cord or foam tape. Don't cover any vents on the camera.
+2. **Fit the gasket.** Press the cord into the groove around the pocket and join the ends with a drop of cyanoacrylate glue where they meet, away from a corner if you can.
+3. **Fit the O-rings.** Put them in the grooves on the mounting face and back face, holding them in with a dab of silicone if needed.
+4. **Seal the cable.** Pack putty around it where it leaves the back face. On the adjustable version, also pack putty where it enters the pocket, leaving slack between the two so the head can still turn. Leave a drip loop in the cable outside the block, so water falls off before it reaches the hole.
+5. **Seal the screws.** Put a dab of silicone under each mounting screw head and into each camera screw hole before fitting the screws.
+6. **Seal to the surface.** Run silicone along the top and sides of the joint with the surface, and leave the bottom open so that water can get out. Keep the weep hole and drains clear.
+
+The O-ring grooves only work on a face that sits against a flat surface. If the back face is exposed, fill the cable hole with putty and run silicone around the cable.
+
 ## Adjustable version
 
 Use this when the camera angle isn't known yet. It has two printed parts, and the camera can be set from 0° to 20° in 4° steps: 0°, 4°, 8°, 12°, 16° or 20°.
@@ -55,7 +109,7 @@ The STLs are already laid out for printing. Leave them as they are in your slice
 - **Base:** back face on the bed, no supports needed.
 - **Head:** camera face on the bed, with supports inside the pocket.
 
-The teeth are the finest detail, at about 1–1.6 mm from tip to tip, so use a 0.4 mm nozzle or smaller and a layer height of 0.2 mm or less. PETG or ASA will last better than PLA outdoors.
+The teeth are the finest detail, at about 1–1.6 mm from tip to tip, so use a 0.4 mm nozzle or smaller and a layer height of 0.2 mm or less. For outdoor use, follow [Print for sealing](#print-for-sealing).
 
 Print one test set before relying on it. Check that the head swings freely when lifted and that the teeth drop fully into mesh at each step. If the fit is wrong for your printer, adjust `TOOTH_CLEARANCE` and `FIT_CLEARANCE` in the script.
 
@@ -65,7 +119,7 @@ Print one test set before relying on it. Check that the head swings freely when 
 2. Fit the head between the cheeks of the base, and pass the cable through the hole in the base into the pocket.
 3. Put a washer on the pivot screw and drive it down through the upper cheek into the head. It cuts its own thread in the cheek, so turn it slowly and tighten it until it's snug.
 4. Put a washer on the clamp screw and insert it up through the lower cheek into the nut. Tighten it lightly.
-5. Fix the base to the surface, then fit the camera to the head.
+5. Fix the base to the surface, then fit the camera to the head. See [Seal it during assembly](#seal-it-during-assembly) for the seals to add.
 
 ### Change the angle
 
@@ -190,7 +244,16 @@ Not written on the sketch, so estimated from its scale:
 | Block thickness | 46 mm at the thick side, 38.35 mm at the thin side |
 | Pocket width | 34 mm, centred on the face |
 | Camera hole depth | 17 mm |
-| Cable hole position | 35 mm above the bottom, about 10 mm from the centreline towards the thick side |
+| Cable hole position | 35 mm above the bottom at the back face, about 10 mm from the centreline towards the thick side |
 | Block screw holes | 65 mm apart, centred on the height, 20 mm from the back face |
+
+Added for weather sealing, not on the sketch:
+
+| Feature | Value used |
+|---|---|
+| Gasket grooves | 2.2 mm wide, 1.5 mm deep |
+| Camera face groove | Centreline 3.5 mm outside the pocket edge, about 147 mm long |
+| Cable hole | Rises 5° towards the pocket, with a 12 mm recess, 6 mm deep, at the back face (fixed wedge only) |
+| Weep hole | 3 mm, from the pocket floor to the outside |
 
 The block is about 54 mm across at the screw holes, so the screws need to be about 60 mm or longer to reach the surface behind it.
