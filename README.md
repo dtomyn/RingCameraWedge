@@ -4,6 +4,14 @@ A 3D model of an angled mounting block for a Ring camera, built from the hand sk
 
 For an overview, watch the [explainer video on YouTube](https://www.youtube.com/watch?v=u9r90f_Vszs), which has a computer-generated voice.
 
+The below is the non-voiced over video...
+
+
+https://github.com/user-attachments/assets/75be6c1d-c91d-4841-a23d-3686b114d44e
+
+
+
+
 ![Three views of the wedge](ring_camera_wedge_preview.png)
 
 ## Files
