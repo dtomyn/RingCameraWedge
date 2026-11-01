@@ -22,21 +22,30 @@ A 3D model of an angled mounting block for a Ring camera, built from the hand sk
 
 ## Adjustable version
 
-Use this when the camera angle isn't known yet. It has two printed parts, and the camera can be set anywhere from 0° to 20°.
+Use this when the camera angle isn't known yet. It has two printed parts, and the camera can be set from 0° to 20° in 4° steps: 0°, 4°, 8°, 12°, 16° or 20°.
 
 ![The adjustable version at three angles](ring_camera_wedge_adjustable_preview.png)
 
 - **Base:** fixes to the mounting surface, with the same mounting screw pattern and cable hole position as the fixed wedge.
 - **Head:** carries the camera, with the same 55 × 110 mm face, camera holes and pocket. It swivels on a vertical axis between two cheeks on the base.
-- **Clamp:** two screws hold the angle by friction. They're reached from the top and bottom, so you can adjust the angle with the camera fitted and watch its live view.
+
+### How it locks
+
+The angle is held by interlocking teeth, not just by tightness:
+
+- **Teeth:** matching teeth on the underside of the head's drum and on the base's lower cheek mesh together. While they're meshed, the head can't turn, even if the plastic relaxes over time.
+- **Clamp screw (bottom):** this pulls the head down into the teeth and keeps them meshed. Loosen it to change the angle. You can reach it with the camera fitted, so you can watch the live view as you adjust.
+- **Pivot screw (top):** this is only the hinge pin. It's fixed into the upper cheek and passes loosely into the head, which is free to slide up it. There's no need to touch it when adjusting.
+
+The head has to lift about 0.7 mm for the teeth to clear each other. There's 1.2 mm of room for this above the head.
 
 ### Parts to buy
 
 | Quantity | Part | Used for |
 |---|---|---|
-| 2 | M4 × 30 mm machine screw | Clamp |
-| 2 | M4 hex nut | Clamp |
-| 2 | M4 washer | Clamp |
+| 2 | M4 × 30 mm machine screw | One clamp screw, one pivot screw |
+| 1 | M4 hex nut | Clamp screw |
+| 2 | M4 washer | One under each screw head |
 | 2 | 4 mm countersunk screw, about 60 mm or longer | Fixing the base to the surface |
 
 ### Print
@@ -46,29 +55,39 @@ The STLs are already laid out for printing. Leave them as they are in your slice
 - **Base:** back face on the bed, no supports needed.
 - **Head:** camera face on the bed, with supports inside the pocket.
 
-Print one test set before relying on it. The parts are designed with 0.3 mm of clearance, which may need adjusting for your printer through `FIT_CLEARANCE` in the script.
+The teeth are the finest detail, at about 1–1.6 mm from tip to tip, so use a 0.4 mm nozzle or smaller and a layer height of 0.2 mm or less. PETG or ASA will last better than PLA outdoors.
 
-### Assemble and adjust
+Print one test set before relying on it. Check that the head swings freely when lifted and that the teeth drop fully into mesh at each step. If the fit is wrong for your printer, adjust `TOOTH_CLEARANCE` and `FIT_CLEARANCE` in the script.
 
-1. Slide a nut into each of the two slots on the side of the head's drum.
+### Assemble
+
+1. Slide the nut into the slot on the side of the head's drum.
 2. Fit the head between the cheeks of the base, and pass the cable through the hole in the base into the pocket.
-3. Put a washer on each clamp screw. Insert the screws through the top and bottom cheeks into the nuts, and tighten them lightly.
-4. Fix the base to the surface, then fit the camera to the head.
-5. Loosen the clamp screws, turn the head until the view is right, and tighten them. The screwdriver shaft must be 7 mm or narrower.
+3. Put a washer on the pivot screw and drive it down through the upper cheek into the head. It cuts its own thread in the cheek, so turn it slowly and tighten it until it's snug.
+4. Put a washer on the clamp screw and insert it up through the lower cheek into the nut. Tighten it lightly.
+5. Fix the base to the surface, then fit the camera to the head.
+
+### Change the angle
+
+1. From below, loosen the clamp screw by about two turns. The screwdriver shaft must be 7 mm or narrower.
+2. Lift the head slightly and turn it to the next step. Each step is 4°.
+3. Lower the head so the teeth drop into mesh. You should feel it settle, and it shouldn't turn when you nudge it.
+4. Tighten the clamp screw firmly by hand. It doesn't need heavy force, because the teeth stop the head turning, and overtightening can damage the printed nut slot.
 
 ### Limits
 
+- **Steps:** the angle can't be set between the 4° steps. The fixed wedge can be generated at any exact angle if you need one.
 - **Direction:** the head turns only away from the surface the base is screwed to, as on the fixed wedge. It can't go below 0°.
 - **Space needed:** the head needs room to swing. At 8° it stands 50.2 mm off the back face and extends 2.0 mm past the thin side. At 20° those become 54.9 mm and 3.8 mm. The fixed wedge is 46 mm deep.
 - **Camera holes:** these are 12 mm deep rather than the fixed wedge's 17 mm, so that a screwdriver can reach the clamp screws. Check that your camera's screws fit.
 - **Pocket:** this is 11 mm deep at every angle.
-- **Holding force:** the angle is held by friction only. Gravity doesn't turn a vertical axis, but a firm knock could shift it.
+- **Strength:** the printed teeth hold against knocks, but they're small and have not been load tested. A hard enough blow could shear them.
 
 ### Switching to the fixed wedge
 
 Once you've found the right angle, you can print the stronger one-piece wedge for it. With calipers, measure from the back face to each edge of the camera face. The angle is `asin((larger - smaller) / 55)`. Then generate that wedge as described under [Script options](#script-options).
 
-To generate the adjustable parts with the assembly at a different angle, run:
+To generate the adjustable parts with the assembly shown at a different step, run:
 
 ```bash
 python ring_camera_wedge_adjustable.py --assembly-angle 12
