@@ -606,7 +606,8 @@ function sceneStl(S, F, facts, raw) {
   $('#hex-rows').innerHTML = rows.join('');
   const allZero = /^0+$/.test(facts.stl.header);
   $('#hex-note').textContent = `Binary STL. The first 80 bytes are a header${allZero ? ', all zeros here' : ''}; then a 4-byte count; then 50 bytes per triangle. The second triangle starts right after these fields.`;
-  const fmt = (v) => v.map((x) => x.toFixed(3).replace(/\.?0+$/, '') || '0').join(', ');
+  // Values this small are float32 rounding; without the check they would print as "-0"
+  const fmt = (v) => v.map((x) => (Math.abs(x) < 5e-4 ? 0 : x).toFixed(3).replace(/\.?0+$/, '') || '0').join(', ');
   const T = facts.stl.first_triangles[0];
   const values = [facts.stl.triangles.toLocaleString('en-US') + ' triangles', `(${fmt(T.normal)})`, `(${fmt(T.vertices[0])}) mm`, `(${fmt(T.vertices[1])}) mm`, `(${fmt(T.vertices[2])}) mm`, 'unused'];
   $('#hex-fields').innerHTML = fields.map((f, i) => `<div data-f="${i}"><u style="background:${f.color}"></u><b style="color:${f.color}">${f.label}</b><span>${values[i]}</span></div>`).join('');

@@ -46,7 +46,7 @@ To check a few moments without rendering everything, run `node render.mjs --stil
 
 `build_assets.py` stops with an error if the code no longer produces the committed STLs. If that happens, regenerate the STLs first.
 
-The STL scene's on-screen numbers come from the file, but the spoken line and caption in `narration.json` state its triangle count as written text. They say 8,682, from before the countersink fix, and the file now has 8,424. Update that line before rebuilding.
+The STL scene's on-screen numbers come from the file, but the spoken line and caption in `narration.json` state its triangle count as written text. If the model changes, update that line before rebuilding.
 
 ## What's real and what's illustrative
 

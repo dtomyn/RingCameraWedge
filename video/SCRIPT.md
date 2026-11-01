@@ -62,7 +62,7 @@ Generated from `narration.json` by `make_audio.py`. Running time 204 s.
 
 > The output is an STL file: a simple list of triangles, in millimeters.
 
-> This one holds 8,682 of them.
+> This one holds 8,424 of them.
 
 > Each triangle takes fifty bytes: a direction, three corners, and two spare bytes. Those are the real first bytes of the file, and that's the triangle they describe.
 
@@ -80,7 +80,7 @@ Generated from `narration.json` by `make_audio.py`. Running time 204 s.
 
 > To be clear, none of this has been tested, so it has no waterproof rating. And it only works if you print and assemble it as the README describes.
 
-## 2:05 The adjustable version
+## 2:04 The adjustable version
 
 **Picture:** The wedge splits into base and head. Close-up of the real teeth with a schematic of the mesh. X-ray shows the clamp and pivot screws. The head lifts, turns and drops through all six positions, then the one-piece wedge returns.
 
@@ -98,7 +98,7 @@ Generated from `narration.json` by `make_audio.py`. Running time 204 s.
 
 > Once you've found the right angle, generate the stronger one-piece wedge at that exact number.
 
-## 2:44 Print it
+## 2:43 Print it
 
 **Picture:** Base and head build up layer by layer on a print bed, in the orientation the STLs are saved in, with a glowing layer line and a moving nozzle.
 

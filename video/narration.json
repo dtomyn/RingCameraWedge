@@ -29,7 +29,7 @@
     ]},
     {"id": "stl", "title": "The STL", "visual": "Solid dissolves to wireframe, then shatters into its real triangles and reassembles. A hex dump of the committed file decodes the first triangle, and that exact triangle lights up on the model.", "lead": 0.3, "tail": 0.5, "lines": [
       {"say": "The output is an S T L file: a simple list of triangles, in millimeters.", "cap": "The output is an STL file: a simple list of triangles, in millimeters."},
-      {"say": "This one holds eight thousand, six hundred and eighty two of them.", "cap": "This one holds 8,682 of them.", "sfx": [{"type": "whoosh", "at": 0.3}]},
+      {"say": "This one holds eight thousand, four hundred and twenty four of them.", "cap": "This one holds 8,424 of them.", "sfx": [{"type": "whoosh", "at": 0.3}]},
       {"say": "Each triangle takes fifty bytes: a direction, three corners, and two spare bytes. Those are the real first bytes of the file, and that's the triangle they describe."},
       {"say": "Tinkercad and your slicer can both read it directly."}
     ]},

@@ -2,7 +2,7 @@
 
 A 3D model of an angled mounting block for a Ring camera, built from the hand sketch in `Scan_20261101.png`. A Python script generates an STL file that you can import into Tinkercad.
 
-For an overview, watch the [explainer video on YouTube](https://www.youtube.com/watch?v=u9r90f_Vszs), which has a computer-generated voice.
+For an overview, watch the [explainer video on YouTube](https://www.youtube.com/watch?v=u9r90f_Vszs), which has a computer-generated voice. It was published before a fix to the mounting screw countersinks in `ring_camera_wedge.stl`, so it shows the older file, with 8,682 triangles rather than the current 8,424. The fix removed stray geometry and didn't change the part's dimensions.
 
 The below is the non-voiced over video...
 
