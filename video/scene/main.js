@@ -486,7 +486,10 @@ function sceneCarve(S, F, facts) {
     $('#carve-card .t').textContent = t >= starts[6] ? 'Finished part' : info.label;
     const tris = finished ? facts.stl.triangles : stage === 0 ? 12 : facts.stages[stage - 1].faces;
     $('#carve-tris .v').textContent = tris.toLocaleString('en-US');
-    if (t >= starts[6]) panel.set(180 - 12, [180]);
+    if (t >= starts[6]) {
+      const line = panel.find('return trimesh.boolean.difference([block');
+      panel.set(line - 12, [line]);
+    }
   };
 }
 

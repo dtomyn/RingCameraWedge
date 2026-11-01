@@ -104,19 +104,17 @@ def ring_seal_groove(origin, u, radius):
 
 
 def screw_cutter(y_end, x, z):
-    """Through hole along +Y with a countersink opening on the thin side (y=0)."""
+    """Through hole along +Y, countersunk on the thin side (y=0), revolved as one solid."""
     r, head_r = SCREW_D / 2, SCREW_HEAD_D / 2
-    shaft = trimesh.creation.cylinder(r, segment=((x, -OVERSHOOT, z), (x, y_end + OVERSHOOT, z)), sections=SECTIONS)
-    collar = trimesh.creation.cylinder(head_r, segment=((x, -OVERSHOOT, z), (x, 0, z)), sections=SECTIONS)
-    # Cone from the head diameter at y=0 down to the shaft diameter
-    profile = [(0, 0), (head_r, 0), (r, SCREW_SINK_DEPTH), (0, SCREW_SINK_DEPTH)]
-    cone = trimesh.creation.revolve(np.array(profile), sections=SECTIONS)
-    if cone.volume < 0:
-        cone.invert()
+    profile = [(0, -OVERSHOOT), (head_r, -OVERSHOOT), (head_r, 0), (r, SCREW_SINK_DEPTH),
+               (r, y_end + OVERSHOOT), (0, y_end + OVERSHOOT)]
+    cutter = trimesh.creation.revolve(np.array(profile), sections=SECTIONS)
+    if cutter.volume < 0:
+        cutter.invert()
     # Map the revolve axis (+Z) onto +Y, then move into place
-    cone.apply_transform(trimesh.transformations.rotation_matrix(-np.pi / 2, (1, 0, 0)))
-    cone.apply_translation((x, 0, z))
-    return [shaft, collar, cone]
+    cutter.apply_transform(trimesh.transformations.rotation_matrix(-np.pi / 2, (1, 0, 0)))
+    cutter.apply_translation((x, 0, z))
+    return cutter
 
 
 def build(angle_deg):
@@ -174,7 +172,7 @@ def build(angle_deg):
 
     # Block mounting screw holes: through, countersunk on the thin side
     for z in (HEIGHT - SCREW_SPACING) / 2, (HEIGHT + SCREW_SPACING) / 2:
-        cutters += screw_cutter(y_extent, SCREW_X, z)
+        cutters.append(screw_cutter(y_extent, SCREW_X, z))
         cutters.append(ring_seal_groove((SCREW_X, y_extent, z), (-1, 0, 0), SCREW_SEAL_R))
 
     return trimesh.boolean.difference([block, *cutters], engine="manifold")

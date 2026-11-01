@@ -31,7 +31,7 @@ FIXED_STAGES = [
     ("Weep hole", 1, "weep = on_face(centre - WEEP_OFFSET)"),
     ("Cableway, recess, O-ring groove", 3, "rise = np.tan(np.radians(CABLE_RISE_DEG))"),
     ("Camera holes", 2, "for z in (HEIGHT - CAMERA_HOLE_SPACING) / 2"),
-    ("Mounting screw holes", 8, "cutters += screw_cutter(y_extent, SCREW_X, z)"),
+    ("Mounting screw holes", 4, "cutters.append(screw_cutter(y_extent, SCREW_X, z))"),
 ]
 
 

@@ -46,6 +46,8 @@ To check a few moments without rendering everything, run `node render.mjs --stil
 
 `build_assets.py` stops with an error if the code no longer produces the committed STLs. If that happens, regenerate the STLs first.
 
+The STL scene's on-screen numbers come from the file, but the spoken line and caption in `narration.json` state its triangle count as written text. They say 8,682, from before the countersink fix, and the file now has 8,424. Update that line before rebuilding.
+
 ## What's real and what's illustrative
 
 - **From the repo:** the sketch, source code, terminal commands and their output, run times, STL bytes, triangle counts, file list, commit history and all printed parts. The cutters in the carving scene are captured from the boolean call in `build()`.
